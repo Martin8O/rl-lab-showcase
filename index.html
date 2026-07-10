@@ -1,0 +1,231 @@
+<!doctype html>
+<!-- rl-lab-showcase — static site for GitHub Pages. Sponsor button goes live once GitHub Sponsors is enabled (R3). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RL Lab — reinforcement learning you can watch, play & teach</title>
+<meta name="description" content="A free, open, browser-based workbench to train, watch and play against reinforcement-learning agents across 100+ environments. Built for learners and educators.">
+<style>
+  :root{
+    --bg:#0b0e14; --surface:#121826; --surface2:#0f1521; --line:#1e2838;
+    --text:#e6edf3; --muted:#93a1b3; --accent:#3ddc97; --accent2:#4aa8ff;
+    --radius:14px; --maxw:1080px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f9fc; --surface:#ffffff; --surface2:#eef3f9; --line:#dde5ee;
+      --text:#0d1626; --muted:#54657a; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  img{max-width:100%;display:block}
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
+    background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
+  .brand{font-weight:700;letter-spacing:.2px;color:var(--text)}
+  .brand b{color:var(--accent)}
+  .nav nav{margin-left:auto;display:flex;gap:20px;align-items:center;font-size:.94rem}
+  .nav nav a{color:var(--muted)}
+  .nav nav a.active,.nav nav a:hover{color:var(--text);text-decoration:none}
+  .btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;
+    background:var(--accent);color:#07110b;border:1px solid transparent}
+  .btn:hover{filter:brightness(1.07);text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+  .pill{display:inline-block;padding:4px 12px;border:1px solid var(--line);border-radius:999px;
+    font-size:.8rem;color:var(--muted);background:var(--surface2)}
+  /* hero */
+  .hero{padding:64px 0 44px;text-align:center}
+  .hero .logo{width:720px;max-width:100%;margin:0 auto 26px}
+  .hero h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.12;margin:.2em 0 .35em;letter-spacing:-.5px}
+  .hero p.lede{font-size:clamp(1.02rem,2vw,1.22rem);color:var(--muted);max-width:720px;margin:0 auto 26px}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .note{font-size:.82rem;color:var(--muted);margin-top:14px}
+  /* sections */
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  h2{font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:-.4px;margin:0 0 .4em}
+  .sub{color:var(--muted);max-width:660px;margin:0 0 30px}
+  .center{text-align:center}
+  .center .sub{margin-left:auto;margin-right:auto}
+  /* agent grid */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .agent{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .agent img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#000}
+  .agent span{display:block;padding:9px 12px;font-size:.82rem;color:var(--muted);text-align:center}
+  /* feature cards */
+  .features{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .card .shot{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--surface2);border-bottom:1px solid var(--line)}
+  .card .body{padding:20px 22px}
+  .card h3{margin:0 0 .3em;font-size:1.18rem}
+  .card h3 .k{color:var(--accent)}
+  .card p{margin:0;color:var(--muted);font-size:.96rem}
+  /* educators */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+  ul.check{list-style:none;padding:0;margin:0}
+  ul.check li{padding:8px 0 8px 30px;position:relative;color:var(--text)}
+  ul.check li::before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
+  ul.check li small{display:block;color:var(--muted)}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  /* open/support */
+  .support{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .support .panel h3{margin-top:0}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:.88rem}
+  footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  footer .legal{max-width:640px}
+  .ph{outline:1px dashed color-mix(in srgb,var(--accent2) 55%,transparent);outline-offset:2px}
+  @media (max-width:820px){
+    .features,.cols,.support{grid-template-columns:1fr}
+    .grid3{grid-template-columns:repeat(2,1fr)}
+    .nav nav a.hideSm{display:none}
+  }
+  @media (max-width:520px){ .grid3{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
+
+<header class="nav"><div class="wrap">
+  <span class="brand">RL&nbsp;<b>Lab</b></span>
+  <nav>
+    <a class="active" href="index.html">For learners</a>
+    <a class="hideSm" href="technical.html">Engineering</a>
+    <a href="https://github.com/Martin8O/RL-Lab">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+  <section class="hero" style="border-top:0">
+    <img class="logo" src="assets/hero.svg" alt="RL Lab">
+    <h1>Reinforcement learning you can<br>watch, play&nbsp;&amp; teach.</h1>
+    <p class="lede">A browser-based workbench where you <b>train</b> agents, <b>watch</b> them learn in
+      real time, and <b>play head-to-head</b> against your own — across <b>100+ environments</b>, from
+      CartPole to MuJoCo, board games and 3D Doom. Free and open.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/Martin8O/RL-Lab">Run it yourself →</a>
+      <a class="btn ghost" href="technical.html">Engineering deep-dive →</a>
+    </div>
+    <div class="badges">
+      <span class="pill">Free &amp; open · AGPL-3.0</span>
+      <span class="pill">100+ environments · 9 algorithms</span>
+      <span class="pill">Actively developed · early access</span>
+    </div>
+  </section>
+</div>
+
+<section>
+  <div class="wrap center">
+    <h2>Watch them learn.</h2>
+    <p class="sub">Every agent below was trained inside RL Lab — no notebooks, no local setup.
+      Pick an environment, pick an algorithm, hit <em>train</em>, and watch the reward curve climb.</p>
+    <div class="grid3">
+      <div class="agent"><img src="assets/breakout.gif" alt="Breakout"><span>Breakout · DQN</span></div>
+      <div class="agent"><img src="assets/lunarlander.gif" alt="Lunar Lander"><span>Lunar Lander · Neuroevolution</span></div>
+      <div class="agent"><img src="assets/carracing.gif" alt="Car Racing"><span>Car Racing · PPO</span></div>
+      <div class="agent"><img src="assets/checkers.gif" alt="Checkers"><span>Checkers · AlphaZero</span></div>
+      <div class="agent"><img src="assets/bipedalwalker.gif" alt="Bipedal Walker"><span>Bipedal Walker · PPO</span></div>
+      <div class="agent"><img src="assets/doom.gif" alt="Doom"><span>Doom: Defend the Center · PPO</span></div>
+      <div class="agent"><img src="assets/humanoid.gif" alt="Humanoid"><span>Humanoid · SAC</span></div>
+      <div class="agent"><img src="assets/pursuit.gif" alt="Pursuit"><span>Pursuit · multi-agent PPO</span></div>
+      <div class="agent"><img src="assets/pong.gif" alt="Pong"><span>Pong · PPO</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center">
+      <h2>The whole loop, in one place.</h2>
+      <p class="sub">The free open-source stack (Gymnasium, Stable-Baselines3, CleanRL) is libraries and
+        command lines. RL Lab is the loop — train, watch, play, analyse — behind one interface a beginner can drive.</p>
+    </div>
+    <div class="features">
+      <div class="card">
+        <img class="shot" src="assets/env-picker.png" alt="Environment picker">
+        <div class="body"><h3><span class="k">Train.</span> 100+ environments, 9 algorithms.</h3>
+          <p>PPO, SAC, TD3, DQN, A2C, a from-scratch neuroevolution and an in-repo AlphaZero — across
+            classic control, MuJoCo physics, Atari, board games, cooperative multi-agent and 3D Doom.</p></div>
+      </div>
+      <div class="card">
+        <img class="shot" src="assets/taxi-training.gif" alt="Live training — reward curve climbing, Q-table filling in real time">
+        <div class="body"><h3><span class="k">Watch.</span> Live, not log files.</h3>
+          <p>The reward curve and a decoupled agent preview stream as it trains — plus Q-table heatmaps,
+            telemetry and skill meters. You <em>see</em> learning happen, you don't read about it after.</p></div>
+      </div>
+      <div class="card">
+        <img class="shot" src="assets/board.png" alt="Play against your agent">
+        <div class="body"><h3><span class="k">Play.</span> Take the controls.</h3>
+          <p>Play head-to-head against an agent you trained — graded from Child to Superhuman across
+            100+ games. Nothing in the free RL stack lets a human step into the loop like this.</p></div>
+      </div>
+      <div class="card">
+        <img class="shot" src="assets/data-lab.gif" alt="Data Lab comparison">
+        <div class="body"><h3><span class="k">Analyse.</span> Research-grade Data Lab.</h3>
+          <p>Compare runs the honest way — IQM, stratified-bootstrap confidence intervals and performance
+            profiles (the <em>rliable</em> method), with one-click publication-ready exports.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Built for teaching.</h2>
+    <div class="cols">
+      <div>
+        <ul class="check">
+          <li>Learn by doing<small>Students train real agents in minutes — not slides, not weeks of environment setup.</small></li>
+          <li>Every knob explained, in place<small>Each hyperparameter carries a plain-language, per-environment popup with a recommended value (EN &amp; CZ).</small></li>
+          <li>Free &amp; open, no lock-in<small>AGPL-3.0. No per-student licences to buy, no accounts to manage — it's yours to run.</small></li>
+          <li>Runs on your students' machines<small>Local-first: the training uses their own compute, so there's no cost or cloud account for you.</small></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <img src="assets/param-popup-zoom.png" alt="In-context hyperparameter explanation — the Learning Rate popup" style="border-radius:8px;border:1px solid var(--line)">
+        <p class="note" style="margin-top:14px">Teaching a course with reinforcement learning? Try RL Lab with your
+          students and tell me what breaks — that feedback shapes what gets built next.</p>
+        <div style="text-align:center;margin-top:6px"><a class="btn" href="mailto:martin@svobodamartin.dev?subject=RL%20Lab%20for%20my%20course">Use it in your course →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap center">
+    <h2>Open, and here to stay.</h2>
+    <p class="sub">RL Lab is built solo and kept free for learners. It's released under <b>AGPL-3.0</b> —
+      open for everyone, sustained by grants, partnerships and people who find it useful.</p>
+    <div class="support">
+      <div class="panel">
+        <h3>Partnerships &amp; grants</h3>
+        <p style="color:var(--muted)">Educators, labs, funders and anyone who wants to help this become a
+          genuinely great open teaching tool — let's talk.</p>
+        <a class="btn" href="mailto:martin@svobodamartin.dev?subject=RL%20Lab%20partnership">Get in touch →</a>
+      </div>
+      <div class="panel">
+        <h3>Support the project</h3>
+        <p style="color:var(--muted)">If RL Lab helps you or your students, a sponsorship keeps the lights
+          on and the roadmap moving.</p>
+        <a class="btn ghost" href="https://github.com/sponsors/Martin8O">Sponsor on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span class="brand">RL&nbsp;<b>Lab</b></span>
+  <a href="technical.html">Engineering deep-dive</a>
+  <a href="https://github.com/Martin8O/RL-Lab">GitHub</a>
+  <a href="mailto:martin@svobodamartin.dev">Contact</a>
+  <p class="legal">Built by Martin Svoboda. Free &amp; open under AGPL-3.0. Not affiliated with Atari, id Software or the Farama Foundation.
+    Atari support is an optional add-on (the <code>ale-py</code> package) and needs game ROMs you obtain and provide yourself; RL&nbsp;Lab bundles neither.</p>
+</div></footer>
+
+</body>
+</html>

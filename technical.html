@@ -1,0 +1,243 @@
+<!doctype html>
+<!-- rl-lab-showcase — static site for GitHub Pages. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RL Lab — engineering deep-dive</title>
+<meta name="description" content="RL Lab: a full-stack reinforcement-learning workbench — Python/FastAPI + React, WebSocket live training, 109 environments, 9 algorithms, a research-grade Data Lab. Built solo in ~4 weeks with Claude Code.">
+<style>
+  :root{
+    --bg:#0b0e14; --surface:#121826; --surface2:#0f1521; --line:#1e2838;
+    --text:#e6edf3; --muted:#93a1b3; --accent:#3ddc97; --accent2:#4aa8ff;
+    --radius:14px; --maxw:1080px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f9fc; --surface:#ffffff; --surface2:#eef3f9; --line:#dde5ee;
+      --text:#0d1626; --muted:#54657a; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.62;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  img{max-width:100%;display:block}
+  header.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
+    background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
+  .brand{font-weight:700;color:var(--text)} .brand b{color:var(--accent)}
+  .nav nav{margin-left:auto;display:flex;gap:20px;align-items:center;font-size:.94rem}
+  .nav nav a{color:var(--muted)} .nav nav a.active,.nav nav a:hover{color:var(--text);text-decoration:none}
+  .btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;background:var(--accent);color:#07110b;border:1px solid transparent}
+  .btn:hover{filter:brightness(1.07);text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+  .pill{display:inline-block;padding:4px 12px;border:1px solid var(--line);border-radius:999px;font-size:.8rem;color:var(--muted);background:var(--surface2)}
+  .hero{padding:60px 0 40px;text-align:center}
+  .hero h1{font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.5px;margin:.1em 0 .3em}
+  .hero p.lede{font-size:clamp(1.02rem,2vw,1.2rem);color:var(--muted);max-width:760px;margin:0 auto 22px}
+  .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  section{padding:50px 0;border-top:1px solid var(--line)}
+  h2{font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.4px;margin:0 0 .5em}
+  .sub{color:var(--muted);max-width:720px;margin:0 0 26px}
+  /* stat row */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center}
+  .stat b{display:block;font-size:1.9rem;letter-spacing:-1px;color:var(--accent)}
+  .stat span{color:var(--muted);font-size:.86rem}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .agent{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .agent img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#000}
+  .agent span{display:block;padding:8px 11px;font-size:.8rem;color:var(--muted);text-align:center}
+  .center{text-align:center}
+  .center .sub{margin-left:auto;margin-right:auto}
+  /* arch diagram */
+  .arch{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .arch .col{padding:22px}
+  .arch .col:last-child{border-left:1px solid var(--line)}
+  .arch .mid{display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:0 16px;background:var(--surface2);border-left:1px solid var(--line);border-right:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:.78rem;text-align:center}
+  .arch h4{margin:0 0 10px;font-size:.82rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+  .arch code{font-family:var(--mono);font-size:.86rem;color:var(--text);display:block;padding:4px 0}
+  .arch code .t{color:var(--accent2)}
+  /* highlight list */
+  .hl{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .item{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .item h3{margin:0 0 .35em;font-size:1.12rem}
+  .item h3 .n{font-family:var(--mono);color:var(--accent);margin-right:8px}
+  .item p{margin:0;color:var(--muted);font-size:.95rem}
+  .shotwrap{margin:22px 0 0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface2)}
+  .stackline{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .tag{font-family:var(--mono);font-size:.82rem;padding:5px 11px;border:1px solid var(--line);border-radius:8px;color:var(--text);background:var(--surface)}
+  .callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:18px 20px;color:var(--muted)}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:.88rem}
+  footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .ph{outline:1px dashed color-mix(in srgb,var(--accent2) 55%,transparent);outline-offset:2px}
+  @media (max-width:820px){ .stats{grid-template-columns:repeat(2,1fr)} .hl{grid-template-columns:1fr} .grid3{grid-template-columns:repeat(2,1fr)}
+    .arch{grid-template-columns:1fr} .arch .col:last-child{border-left:0;border-top:1px solid var(--line)}
+    .arch .mid{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px}
+    .nav nav a.hideSm{display:none} }
+</style>
+</head>
+<body>
+
+<header class="nav"><div class="wrap">
+  <span class="brand">RL&nbsp;<b>Lab</b></span>
+  <nav>
+    <a href="index.html">For learners</a>
+    <a class="active" href="technical.html">Engineering</a>
+    <a href="https://github.com/Martin8O/RL-Lab">GitHub</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+  <section class="hero" style="border-top:0">
+    <img src="assets/hero.svg" alt="RL Lab" style="width:720px;max-width:100%;margin:0 auto 22px">
+    <h1>RL Lab — engineering deep-dive</h1>
+    <p class="lede">A full-stack reinforcement-learning workbench: a Python/FastAPI training backend and a
+      React 19 front-end wired together over WebSocket, putting <b>109 environments</b> and <b>9 algorithms</b>
+      behind one live dashboard. Built solo in <b>~4 weeks</b>, AI-assisted with Claude Code.</p>
+    <div class="badges">
+      <span class="pill">Python · FastAPI · PyTorch</span>
+      <span class="pill">React 19 · TypeScript · Vite</span>
+      <span class="pill">WebSocket live streaming</span>
+      <span class="pill">AGPL-3.0</span>
+    </div>
+  </section>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="center">
+      <h2>Every agent here, trained in the tool.</h2>
+      <p class="sub">Nine algorithms across 100+ environments — a sample of what comes out the other end.</p>
+    </div>
+    <div class="grid3">
+      <div class="agent"><img src="assets/breakout.gif" alt="Breakout"><span>Breakout · DQN</span></div>
+      <div class="agent"><img src="assets/lunarlander.gif" alt="Lunar Lander"><span>Lunar Lander · Neuroevolution</span></div>
+      <div class="agent"><img src="assets/carracing.gif" alt="Car Racing"><span>Car Racing · PPO</span></div>
+      <div class="agent"><img src="assets/checkers.gif" alt="Checkers"><span>Checkers · AlphaZero</span></div>
+      <div class="agent"><img src="assets/bipedalwalker.gif" alt="Bipedal Walker"><span>Bipedal Walker · PPO</span></div>
+      <div class="agent"><img src="assets/doom.gif" alt="Doom"><span>Doom: Defend the Center · PPO</span></div>
+      <div class="agent"><img src="assets/humanoid.gif" alt="Humanoid"><span>Humanoid · SAC</span></div>
+      <div class="agent"><img src="assets/pursuit.gif" alt="Pursuit"><span>Pursuit · multi-agent PPO</span></div>
+      <div class="agent"><img src="assets/pong.gif" alt="Pong"><span>Pong · PPO</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>By the numbers</h2>
+    <div class="stats">
+      <div class="stat"><b>109</b><span>environments, 9 families — classic control, Atari, MuJoCo, MiniGrid, Box2D, OpenSpiel, PettingZoo, ViZDoom</span></div>
+      <div class="stat"><b>9</b><span>algorithms — PPO, SAC, TD3, DQN, QR-DQN, A2C, tabular Q, a from-scratch neuroevolution, an in-repo AlphaZero</span></div>
+      <div class="stat"><b>~45.6k</b><span>lines of code · 115 commits · ~480 tests</span></div>
+      <div class="stat"><b>99</b><span>architecture decision records — the integration seams, documented</span></div>
+    </div>
+    <p class="sub" style="margin-top:20px;max-width:920px"><b>Atari is optional by design.</b> The
+      Atari backend (<code>ale-py</code>) is GPL-licensed and bundles copyrighted ROMs, so it is
+      deliberately <em>not</em> a hard dependency — it's an opt-in install (<code>pip install ale-py</code>),
+      keeping the core AGPL-clean and free of third-party ROMs. Bring your own and the 64 Atari
+      environments light up; skip it and ~45 run out of the box.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Architecture</h2>
+    <p class="sub">Local-first and single-user: the whole thing runs on your own machine, so training uses
+      your own compute. The training loop and the visual preview are <em>decoupled</em> — the network
+      never blocks learning, and the UI stays live at 60&nbsp;fps while a model trains.</p>
+    <div class="arch">
+      <div class="col"><h4>Backend · Python</h4>
+        <code><span class="t">FastAPI</span> — REST + WebSocket</code>
+        <code><span class="t">PyTorch</span> — training loop</code>
+        <code><span class="t">Gymnasium</span> env adapters (×9 families)</code>
+        <code>decoupled preview rollout</code>
+        <code>Data Lab — rliable-style stats</code>
+      </div>
+      <div class="mid">WebSocket<br>▶ reward curve<br>▶ frames<br>▶ telemetry<br>◀ your inputs</div>
+      <div class="col"><h4>Frontend · TypeScript</h4>
+        <code><span class="t">React 19</span> + <span class="t">Vite</span></code>
+        <code>live dashboard &amp; charts</code>
+        <code>agent preview canvas</code>
+        <code>play-vs-agent controls</code>
+        <code>Data Lab comparison views</code>
+      </div>
+    </div>
+    <div class="shotwrap"><img src="assets/taxi-training.gif" alt="Live training — reward curve climbing, Q-table filling in real time"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What was interesting to build</h2>
+    <div class="hl">
+      <div class="item"><h3><span class="n">01</span>Decoupled live streaming</h3>
+        <p>A separate preview rollout streams frames + metrics over WebSocket while the training loop runs
+          full-speed — the reward curve and the agent you're watching never stall each other.</p></div>
+      <div class="item"><h3><span class="n">02</span>Play against your own agent</h3>
+        <p>A human joins the loop over WebSocket and is graded on a per-environment, calibrated scale
+          (Child → Superhuman) across 100+ games, with named leaderboards.</p></div>
+      <div class="item"><h3><span class="n">03</span>Pedagogy in the data model</h3>
+        <p>Every hyperparameter carries a per-environment recommended value and a bilingual (EN/CZ)
+          explanation, surfaced exactly where you tune it — teaching baked into the schema, not bolted on.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Half the product — the Data Lab</h2>
+    <p class="sub">RL Lab trains the agents. The <b>Data Lab</b> tells you, honestly, <em>which</em> run actually won —
+      a research-grade statistics workbench built into the same browser. Not a chart dump: the real method reviewers
+      expect, one click from a publication-ready export.</p>
+    <div class="shotwrap"><img src="assets/data-lab.gif" alt="Data Lab — live head-to-head statistical comparison of two algorithms"></div>
+    <p class="sub" style="margin-top:16px;max-width:900px">Above: a head-to-head of PPO vs Neuroevolution on CartPole — learning
+      curves overlay, repeated seeds collapse into mean&nbsp;±&nbsp;CI bands, and the aggregate updates live as each run is added.</p>
+    <div class="hl" style="margin-top:22px">
+      <div class="item"><h3>rliable aggregates</h3>
+        <p>A faithful reimplementation of the <em>rliable</em> suite — IQM, mean, median and optimality-gap — the modern
+          standard for reporting RL results without cherry-picking a lucky seed.</p></div>
+      <div class="item"><h3>Honest uncertainty</h3>
+        <p>Stratified-bootstrap confidence intervals, performance profiles and probability-of-improvement — you see whether
+          one algorithm <em>really</em> beats another, or just got lucky.</p></div>
+      <div class="item"><h3>Ranked, at a glance</h3>
+        <p>Runs sort into a live ranked summary table as you add them — a clean verdict across seeds and environments.</p></div>
+      <div class="item"><h3>Seven export formats</h3>
+        <p>One click to publication-ready figures and tables — straight into a paper, report or slide deck.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Stack</h2>
+    <div class="stackline">
+      <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">PyTorch</span>
+      <span class="tag">NumPy</span><span class="tag">Gymnasium</span><span class="tag">Stable-Baselines3</span>
+      <span class="tag">WebSockets</span><span class="tag">React 19</span><span class="tag">TypeScript</span>
+      <span class="tag">Vite</span><span class="tag">OpenSpiel</span><span class="tag">PettingZoo</span>
+      <span class="tag">MuJoCo</span><span class="tag">ViZDoom</span>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      <b style="color:var(--text)">Honest framing.</b> The algorithms themselves are standard implementations —
+      the moat here is <em>integration, UX and pedagogy</em>: making 109 environments × 9 algorithms × live
+      visualisation × play × research statistics behave as one coherent tool a beginner can actually drive.
+      That breadth-under-one-roof is the hard, and the interesting, part. Built solo, AI-assisted with Claude Code.
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span class="brand">RL&nbsp;<b>Lab</b></span>
+  <a href="index.html">For learners</a>
+  <a href="https://github.com/Martin8O/RL-Lab">GitHub</a>
+  <a href="mailto:martin@svobodamartin.dev">Contact</a>
+</div></footer>
+
+</body>
+</html>
